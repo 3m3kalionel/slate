@@ -2,238 +2,379 @@
 title: API Reference
 
 language_tabs: # must be one of https://git.io/vQNgJ
-  - shell
-  - ruby
-  - python
   - javascript
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
+  - <a href='#'>&copy; Andela, developed by Chukwuemeka Lionel Okoro</a>
   - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
 
-includes:
-  - errors
 
 search: true
 ---
 
+
+
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+PostIt API consists of several API endpoints that allows registered users to create accounts, create groups, add registered users to groups and post messages to groups which they belong. It also ensures that only group members can perform certain operations.
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+## Development
 
-This example API documentation page was created with [Slate](https://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
+This application was developed using [NodeJs](https://nodejs.org), with [Express](http://expressjs.com) used for routing and [PostgreSQL](https://www.postgresql.org/) database with [Sequelize](http://docs.sequelizejs.com/) used as the ORM.
 
-# Authentication
+## Installation
 
-> To authorize, use this code:
+return to document this
 
-```ruby
-require 'kittn'
+## API Summary
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
+### Users
 
-```python
-import kittn
+Endpoint | Functionality
+--------- | -----------
+POST /api/user/signup | Registers a user for the application
+POST /api/user/signin | Signs a user into the application
+POST /api/user/verify | Verifies a registered user that has forgotten his password
+GET /api/users | Allows a logged in user to search for a user
 
-api = kittn.authorize('meowmeowmeow')
-```
+### Groups
 
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
-```
+Endpoint | Functionality
+--------- | -----------
+POST /api/group | Allows a logged in user create a new group
+POST /api/group/:groupid/user | Allows a group member add other users to a group
+POST /api/group/:groupid/message | Allows a logged in user post a message
+GET /api/group/:groupid/messages | Allows a logged in user list group messages
+GET /api/group/:groupid/users | Allows a logged in user list all users in a group
+GET /api/groups | Allows a logged in user to list groups he/she belongs to
 
-```javascript
-const kittn = require('kittn');
+# Users
 
-let api = kittn.authorize('meowmeowmeow');
-```
-
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
-
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
-</aside>
-
-# Kittens
-
-## Get All Kittens
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
-
-```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
-```
+## Signup User
 
 ```javascript
-const kittn = require('kittn');
+Request:
 
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
+{
+  "username": "user1"
+  "password": "12345678"
+  "email": "user1@gmail.com"
+  "phone": "00000000001"
+}
+
+Response: 
+
+{
+    "user": {
+        "id": 11,
+        "username": "user1",
+        "email": "user1@gmail.com",
+        "phone": "00000000001",
+        "updatedAt": "2017-09-01T01:53:42.998Z",
+        "createdAt": "2017-09-01T01:53:42.998Z"
+    },
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwiZW1haWwiOiJ1c2VyMUBnbWFpbC5jb20iLCJpYXQiOjE1MDQyMzA4MjMsImV4cCI6MTUwNDQwMzYyM30.1KX3u5ylU6XEFeFO2DlujgVVHF7ppGb69ysiBnq6zWI"
+}
+
 ```
 
-> The above command returns JSON structured like this:
 
-```json
+### Request
+* Endpoint: POST: `/api/user/signup`
+* Body: `(application/json)`
+
+### Response
+* Status: `201: Created`
+* Body: `(application/json)`
+
+
+## Signin User
+
+```javascript
+Request:
+
+{
+  "username": "user1"
+  "password": "12345678"
+}
+
+Response:
+
+{
+    "status": "user1 successfully logged in",
+    "user": {
+        "id": 11,
+        "username": "user1",
+        "email": "user1@gmail.com",
+        "phone": "00000000001"
+    },
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwiZW1haWwiOiJ1c2VyMUBnbWFpbC5jb20iLCJpZCI6MTEsImlhdCI6MTUwNDIzMjEyMiwiZXhwIjoxNTA0NDA0OTIyfQ.jtgiwpADFsVpfdt1h0NC_ss6frdHq_92LbbsK2IB97A"
+}
+
+```
+### Request
+* Endpoint: POST: `/api/user/signin`
+* Body: `(application/json)`
+
+### Response
+* Status: `200: OK`
+* Body: `(application/json)`
+
+
+## Verify User
+
+```javascript
+Request:
+
+{
+  "email": "user1@gmail.com"
+}
+
+Response:
+
+{
+  "success": true,
+  "message": "verification mail sent"
+}
+
+```
+### Request
+* Endpoint: POST: `/api/user/verify`
+* Body: `(application/json)`
+
+### Response
+* Status: `200: OK`
+* Body: `(application/json)`
+
+## Search for Users
+
+> Sample JSON structured response:
+
+```javascript
+
+
 [
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
+    {
+        "id": 2,
+        "username": "emeka",
+        "email": "emeka.l.okoro@gmail.com",
+        "phone": "0803*****6"
+    },
+    {
+        "id": 11,
+        "username": "user1",
+        "email": "user1@gmail.com",
+        "phone": "00000000001"
+    }
 ]
+
 ```
+### Request
+* Endpoint: GET: `/users?q=e`
+* Requires: Authentication
 
-This endpoint retrieves all kittens.
+### Response
+* Status: `200: OK`
+* Body: `(application/json)`
 
-### HTTP Request
+# Groups
 
-`GET http://example.com/api/kittens`
-
-### Query Parameters
-
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
-
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-
-## Get a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
-```
+## Create Group
 
 ```javascript
-const kittn = require('kittn');
+Request: 
 
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
+{
+  "name": "API documentation test group"
+  "description": "midnight documentation test group"
+}
+
+Response:
+
+{
+    "success": true,
+    "message": "Group created",
+    "group": {
+        "id": 3,
+        "name": "API documentation test group",
+        "description": "midnight documentation test group",
+        "updatedAt": "2017-09-01T03:10:55.342Z",
+        "createdAt": "2017-09-01T03:10:55.342Z"
+    }
+}
+
 ```
 
-> The above command returns JSON structured like this:
+### Request
+* Endpoint: POST: `/group`
+* Requires: Authentication
+* Body: `(application/json)`
 
-```json
+### Response
+* Status: `201: Created`
+* Body: `(application/json)`
+
+## Add user to group
+
+```javascript
+Request:
 {
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
+  "userId": 2
+}
+
+Response:
+
+{
+    "success": true,
+    "message": "emeka added to group",
+    "user": {
+        "id": 2,
+        "username": "emeka",
+        "email": "emeka.l.okoro@gmail.com"
+    }
 }
 ```
 
-This endpoint retrieves a specific kitten.
+### Request
+* Endpoint: POST: `/group/:groupid/user`
+* Requires: Authentication
+* Body: `(application/json)`
 
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
+### Response
+* Status: `201: Created`
+* Body: `(application/json)`
 
-### HTTP Request
 
-`GET http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
-
-## Delete a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -X DELETE
-  -H "Authorization: meowmeowmeow"
-```
+## Post message
 
 ```javascript
-const kittn = require('kittn');
+Request:
 
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
-```
-
-> The above command returns JSON structured like this:
-
-```json
 {
-  "id": 2,
-  "deleted" : ":("
+  "content": "hey everyone. how's it going"
+}
+
+Response:
+
+{
+    "message": {
+        "id": 14,
+        "content": "hey everyone. how's it going",
+        "userId": 11,
+        "groupId": 3,
+        "updatedAt": "2017-09-01T05:46:50.441Z",
+        "createdAt": "2017-09-01T05:46:50.441Z"
+    }
 }
 ```
 
-This endpoint retrieves a specific kitten.
+### Request
+* Endpoint: POST: `/group/3/message`
+* Requires: Authentication
+* Body: `(application/json)`
 
-### HTTP Request
+### Response
+* Status: `201: Created`
+* Body: `(application/json)`
 
-`DELETE http://example.com/kittens/<ID>`
+## Retrieve group messages
 
-### URL Parameters
+``` javascript
+Response:
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to delete
+[
+    {
+        "id": 14,
+        "content": "hey everyone. how's it going",
+        "userId": 11,
+        "groupId": 3,
+        "createdAt": "2017-09-01T05:46:50.441Z",
+        "updatedAt": "2017-09-01T05:46:50.441Z"
+    }
+]
 
+
+```
+
+### Request:
+* Endpoint: GET: `/group/3/messages`
+* Reauires: Authentication
+
+### Response
+* Status: `200: OK`
+* Body `(application/json)`
+
+## List group members
+
+``` javascript
+
+Response:
+
+[
+    {
+        "id": 2,
+        "username": "emeka",
+        "email": "emeka.l.okoro@gmail.com",
+        "phone": "0803******6",
+        "UserGroups": {
+            "createdAt": "2017-09-01T03:25:19.367Z",
+            "updatedAt": "2017-09-01T03:25:19.367Z",
+            "groupId": 3,
+            "userId": 2
+        }
+    },
+    {
+        "id": 11,
+        "username": "user1",
+        "email": "user1@gmail.com",
+        "phone": "00000000001",
+        "UserGroups": {
+            "createdAt": "2017-09-01T03:10:55.422Z",
+            "updatedAt": "2017-09-01T03:10:55.422Z",
+            "groupId": 3,
+            "userId": 11
+        }
+    }
+]
+
+```
+
+### Request:
+* Endpoint: GET: `/group/:groupid/users`
+* Requires: Authentication
+
+### Response
+* Status: `200: OK`
+* Body `(application/json)`
+
+
+## List user's groups
+
+```javascript
+Response:
+
+[
+    {
+        "id": 3,
+        "name": "API documentation test group",
+        "description": "midnight documentation test group",
+        "createdAt": "2017-09-01T03:10:55.342Z",
+        "updatedAt": "2017-09-01T03:10:55.342Z",
+        "UserGroups": {
+            "createdAt": "2017-09-01T03:10:55.422Z",
+            "updatedAt": "2017-09-01T03:10:55.422Z",
+            "groupId": 3,
+            "userId": 11
+        }
+    }
+]
+
+```
+
+### Request:
+* Endpoint: GET: `/groups`
+* Requires: Authentication
+
+### Response
+* Status: `200: OK`
+* Body `(application/json)`
