@@ -44,6 +44,8 @@ POST /api/v1/user/google_auth | Signs a user into the application
 POST /api/v1/user/verify | Verifies a registered user that has forgotten his password
 GET /api/v1/user/reset/:token | Allows a registered user to reset his password
 GET /api/v1/users | Allows a logged in user to search for a user
+GET /api/v1/users/search | Allows a logged in user to search all users in the application
+
 
 ### Groups
 
@@ -55,6 +57,7 @@ POST /api/v1/group/:groupid/message | Allows a logged in user post a message
 GET /api/v1/group/:groupid/messages | Allows a logged in user list group messages
 GET /api/v1/group/:groupid/users | Allows a logged in user list all users in a group
 GET /api/v1/groups | Allows a logged in user to list groups he/she belongs to
+GET /api/v1/groups/search | Allows a logged in user to search all groups in the application
 
 # Users
 
@@ -255,6 +258,58 @@ Has default values of limit and offset set to 3 and 0 respectively
 Requires a username query to be specified
 </aside>
 
+## Search all Users
+
+This endpoint handles the request for all registered users in the application. Required details are the username. Returns Pagination metadata.
+
+```javascript
+Response:
+
+{
+    "totalPageCount": 6,
+    "currentPage": 1,
+    "nextPage": 2,
+    "rowCount": 16,
+    "users": [
+        {
+            "id": 3,
+            "username": "femi",
+            "email": "femi@andela.com",
+            "phone": "395853"
+        },
+        {
+            "id": 4,
+            "username": "terungwa",
+            "email": "terungwa@andela.com",
+            "phone": "15"
+        },
+        {
+            "id": 5,
+            "username": "zuckerberg",
+            "email": "zuckerberg@andela.com",
+            "phone": "4455"
+        }
+    ]
+}
+
+```
+
+### Request:
+* Endpoint: GET: `localhost:8080/api/v1/users/search?username=e`
+* Requires: Authentication
+
+### Response
+* Status: `200: OK`
+
+<aside class="success">
+Has default values of limit and offset set to 3 and 0 respectively
+</aside>
+
+<aside class="warning">
+Requires a username query to be specified
+</aside>
+
+
 # Groups
 
 ## Create Group
@@ -427,6 +482,8 @@ Response:
 
 ## List User's groups
 
+This endpoint handles the request for a list of all the groups a user belongs to.
+
 ```javascript
 Response:
 
@@ -461,6 +518,55 @@ Response:
 
 ### Response
 * Status: `200: OK`
+
+## Search all Groups
+
+This endpoint handles the request for all registered users in the application. Required details are the username. Returns Pagination metadata.
+
+```javascript
+Response:
+
+{
+    "totalPageCount": 4,
+    "currentPage": 1,
+    "nextPage": 2,
+    "rowCount": 12,
+    "groups": [
+        {
+            "id": 64,
+            "name": "class 30",
+            "description": "next level"
+        },
+        {
+            "id": 65,
+            "name": "react developers",
+            "description": "it is what it is"
+        },
+        {
+            "id": 66,
+            "name": "Doggfathers",
+            "description": "the original doggfathers"
+        }
+    ]
+}
+
+```
+
+### Request:
+* Endpoint: GET: `localhost:8080/api/v1/groups/search?name=e`
+* Requires: Authentication
+
+### Response
+* Status: `200: OK`
+
+<aside class="success">
+Has default values of limit and offset set to 3 and 0 respectively
+</aside>
+
+<aside class="warning">
+Requires a name query to be specified for the group.
+</aside>
+
 
 # Errors
 
